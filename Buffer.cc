@@ -2,7 +2,7 @@
 
 Buffer::Buffer()
 {}
-Buffer~Buffer()
+Buffer::~Buffer()
 {}
 const char* Buffer::peek()
 {
@@ -19,9 +19,9 @@ void Buffer::retrieve(int len)
 	_buf = _buf.substr(len, _buf.size());
 }
 
-void Buffer::append(const string& buf)
+void Buffer::append(const std::string& buf)
 {
-	_buf.append(data);
+	_buf.append(buf);
 }
 
 std::string Buffer::retrieveAllAsString()

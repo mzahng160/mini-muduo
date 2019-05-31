@@ -10,7 +10,7 @@ public:
 	const char* peek();
 	int readableBytes();
 	void retrieve(int len);
-	void append(const string& buf);
+	void append(const std::string& buf);
 	std::string retrieveAllAsString();
 	std::string retrieveAsString(size_t len);
 

@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/socket.h>
-
+#include <errno.h>
 #include <iostream>
 
 using namespace std;
