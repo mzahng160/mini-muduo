@@ -2,6 +2,7 @@
 #include "Channel.h"
 #include <iostream>
 #include <sys/epoll.h>
+#include <errno.h>
 
 using namespace std;
 
