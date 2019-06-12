@@ -1,5 +1,8 @@
 #include "EchoServer.h"
 #include "TcpConnection.h"
+#include "EventLoop.h"
+#include "Buffer.h"
+
 #include <iostream>
 
 using namespace std;
@@ -23,12 +26,28 @@ void EchoServer::onConnection(TcpConnection* pCon)
 {
 	cout << "onConnection" << endl;
 }
-void EchoServer::onMessage(TcpConnection* pCon, string* message)
+void EchoServer::onMessage(TcpConnection* pCon, Buffer* message)
 {
-	while(message->size() > MESSAGE_LENGTH)
+	while(message->readableBytes() > MESSAGE_LENGTH)
 	{
-		string data = message->substr(0, MESSAGE_LENGTH);
-		*message = message->substr(MESSAGE_LENGTH, message->size());
+		string data = message->retrieveAsString(MESSAGE_LENGTH);
 		pCon->send(data + '\n');
+	}
+
+	_timer = _pLoop->runEvery(0.5, this);
+}
+
+void  EchoServer::onWriteComplate(TcpConnection* pCon)
+{
+	cout << "onWriteComplate" << endl;
+}
+
+void EchoServer::run(void* param)
+{
+	cout << _index << endl;
+	if(_index++ == 3)
+	{
+		_pLoop->cancelTimer(_timer);
+		_index = 0;
 	}
 }

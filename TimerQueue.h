@@ -5,52 +5,14 @@
 #include "IChannelCallback.h"
 #include "IRun.h"
 #include "Timestamp.h"
+#include "Timer.h"
+
 #include <set>
 #include <vector>
 
 class TimerQueue : public IChannelCallback
 {
 public:
-
-    class Timer
-    {
-    public:
-        Timer(Timestamp stamp, IRun* pRun, double interval)
-          :_stamp(stamp)
-          ,_id(stamp)
-          ,_pRun(pRun)
-          ,_interval(interval)        
-          {}
-        Timestamp getStamp()
-        {
-            return _stamp;
-        }
-
-        Timestamp getId()
-        {
-            return _id;
-        }
-
-        void run()
-        {
-          _pRun->run(this);
-        }
-
-        Timestamp isRepeat()
-        {
-            return _interval > 0.0;
-        }
-
-        void moveToNext()
-        {
-            _stamp = Timestamp::nowAfter(_interval);
-        }
-    private:
-        Timestamp _stamp;
-        Timestamp _id;
-        IRun* _pRun;
-        double _interval;    
-    };
   
     class AddTimerWrapper : public IRun
     {
@@ -86,6 +48,12 @@ public:
     ~TimerQueue();
     void doAddTimer(void* param);
     void doCancelTimer(void* param);
+    Timer* addTimer(IRun* pRun, Timestamp when,
+            double interval);
+    void cancelTimer(Timer* timerId);
+
+    virtual void handleRead();
+    virtual void handleWrite();
 
 private:
     typedef std::pair<Timestamp, Timer*> Entry;
@@ -93,8 +61,12 @@ private:
 
     int createTimerId();
     vector<TimerQueue::Entry> getExpired(Timestamp now);
+    void readTimerfd(int timerfd, Timestamp now);
+    void reset(const std::vector<Entry>& expired, Timestamp now);
+
     void resetTimerfd(int timerfd, Timestamp stamp);
     bool insert(Timer* pItem);
+    struct timespec howMuchTimeFromNow(Timestamp when);
 
     int _timerfd;
     TimerList _timers;

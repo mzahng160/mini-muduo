@@ -9,5 +9,6 @@ class TcpConnection;
 class EventLoop;
 class Epoll;
 class IMuduoUser;
+class Buffer;
 
 #endif

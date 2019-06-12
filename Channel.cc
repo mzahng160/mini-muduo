@@ -14,6 +14,7 @@ Channel::Channel(EventLoop* pLoop, int sockfd)
 	,_pCallback(NULL)
 	,_pLoop(pLoop)
 {
+	cout << "Channel new Channel finish!" << " sockfd "<< sockfd << endl;
 }
 
 Channel::~Channel()

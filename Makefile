@@ -13,8 +13,8 @@ CPPFLAG += -MMD
 SOURCE := $(wildcard *.$(PS))
 OBJS := $(patsubst %.$(PS), %.o, $(SOURCE))
 DEPS := $(patsubst %.o, %.d, $(OBJS))
-MIDDING_DEPS := $(filter-out $(wildcard $(DEPS)), $(DEPS))
-MIDDING_DEPS_SOURCES := $(wildcard $(patsubst %.d, %.$(PS), $(MIDDING_DEPS)))
+MISSING_DEPS := $(filter-out $(wildcard $(DEPS)),$(DEPS))
+MISSING_DEPS_SOURCES := $(wildcard $(patsubst %.d,%.$(PS),$(MISSING_DEPS)))
 
 .PHONY : all deps objs clean rebuild
 
@@ -32,9 +32,9 @@ clean :
 
 rebuild : clean all
 
-ifneq ($(MIDDING_DEPS),)
-$(MIDDING_DEPS) :
-		@$(RM) $(patsubst %.d, %.o, $@)
+ifneq ($(MISSING_DEPS),)
+$(MISSING_DEPS) :
+		@$(RM) $(patsubst %.d,%.o,$@)
 endif
 
 $(DESTINATION) : $(OBJS)
