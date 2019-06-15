@@ -16,9 +16,7 @@ EventLoop::EventLoop()
 	_eventfd = createEventfd();
 	_weakupChannel = new Channel(this, _eventfd);
 	_weakupChannel->setCallback(this);
-	_weakupChannel->enableReading();
-
-	cout << "EventLoop new Channel finish!" << endl;
+	_weakupChannel->enableReading();	
 }
 EventLoop::~EventLoop()
 {}
@@ -35,6 +33,8 @@ void EventLoop::loop()
 		{
 			(*it)->handleEvent();
 		}
+
+		doPendingFunctors();
 	}
 }
 void EventLoop::update(Channel* pChannel)
