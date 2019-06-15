@@ -71,6 +71,8 @@ void TcpConnection::handleRead()
 
 void TcpConnection::handleWrite()
 {
+	cout << "TcpConnection handleWrite" << endl;
+
 	int sockfd = _pChannel->getSockfd();
 	if(_pChannel->isWriting())
 	{

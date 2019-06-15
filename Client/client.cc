@@ -28,13 +28,19 @@ int main()
         exit(EXIT_FAILURE);
     }
  
-    const char* buf = "daiyudong";
+    const char* buf = "xxxxxxqw";
  
     for (int i = 0; i < 10; ++i) {
         int len = (int)write(sockfd, buf, strlen(buf));
         if (len > 0) {
             printf("write len=%d\n", len);
         }
+
+		//char data[8];
+		//memset(data, 0, sizeof(data));
+		//read(sockfd, data, sizeof(data));
+		//printf("read buf=%s\n", data);
+
         sleep(1);
     }
 }

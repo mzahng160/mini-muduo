@@ -33,6 +33,7 @@ string Timestamp::toString() const
   int64_t seconds = _microSecondsSinceEpoch / kMicroSecondsPerSecond;
   int64_t microseconds = _microSecondsSinceEpoch % kMicroSecondsPerSecond;
   snprintf(buf, sizeof(buf)-1, "%" PRId64 ".%06" PRId64 "", seconds, microseconds);
+  cout << "Timestamp::toString buf" << buf << endl;
   return buf;
 }
 

@@ -12,14 +12,17 @@
 
 using namespace std;
 
+#define UINTPTR_MAX 0xffffffff
+
 TimerQueue::TimerQueue(EventLoop* pLoop)
     :_timerfd(createTimerId())
     ,_pLoop(pLoop)
-    ,_timerfdChannel(new Channel(pLoop, _timerfd))
+	,_timerfdChannel(new Channel(_pLoop, _timerfd))
     ,_addTimerWrapper(new AddTimerWrapper(this))
     ,_cancelTimerWrapper(new CancelTimerWrapper(this))
 {
-	_timerfdChannel;
+	_timerfdChannel->setCallback(this);
+	_timerfdChannel->enableReading();
 }
 
 TimerQueue::~TimerQueue()
@@ -29,7 +32,7 @@ TimerQueue::~TimerQueue()
 
 Timer* TimerQueue::addTimer(IRun* pRun, Timestamp when, double interval)
 {
-	cout << "TimerQueue addtimer" << endl;
+
 	Timer* pTimer = new Timer(when, pRun, interval);
 	_pLoop->queueLoop(_addTimerWrapper, pTimer);
 	return pTimer;
@@ -37,7 +40,6 @@ Timer* TimerQueue::addTimer(IRun* pRun, Timestamp when, double interval)
 
 void TimerQueue::cancelTimer(Timer* timerId)
 {
-	cout << "TimerQueue cancelTimer" << endl;
 	_pLoop->queueLoop(_cancelTimerWrapper, (void*)timerId);
 }
 
@@ -53,7 +55,17 @@ void TimerQueue::doAddTimer(void* param)
 
 void TimerQueue::doCancelTimer(void* param)
 {
-
+	Timer* timer = static_cast<Timer*>(param);
+	Entry e(timer->getId(), timer);
+	TimerList::iterator it;
+	for (it = _timers.begin(); it != _timers.end(); it++)
+	{
+		if (it->second == timer)
+		{
+			_timers.erase(it);
+			break;
+		}
+	}
 }
 
 void TimerQueue::handleRead()
@@ -123,7 +135,7 @@ void TimerQueue::reset(const std::vector<Entry>& expired, Timestamp now)
 		nextExpired = _timers.begin()->second->getStamp();
 
 	if(nextExpired.valid())
-		readTimerfd(_timerfd, nextExpired);
+		resetTimerfd(_timerfd, nextExpired);
 }
 
 void TimerQueue::resetTimerfd(int timerfd, Timestamp stamp)
@@ -151,7 +163,7 @@ struct timespec TimerQueue::howMuchTimeFromNow(Timestamp when)
 	ts.tv_sec = static_cast<time_t>(
 			microseconds / Timestamp::kMicroSecondsPerSecond);
 	ts.tv_nsec = static_cast<long>(
-			(microseconds / Timestamp::kMicroSecondsPerSecond) * 1000);
+			(microseconds % Timestamp::kMicroSecondsPerSecond) * 1000);
 
 	return ts;
 }

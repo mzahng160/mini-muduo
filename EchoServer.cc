@@ -12,6 +12,7 @@ using namespace std;
 EchoServer::EchoServer(EventLoop* pLoop)
 	:_pLoop(pLoop)
 	,_pServer(pLoop)
+	,_index(0)	
 {
 	_pServer.setCallback(this);
 }
@@ -31,6 +32,7 @@ void EchoServer::onMessage(TcpConnection* pCon, Buffer* message)
 	while(message->readableBytes() > MESSAGE_LENGTH)
 	{
 		string data = message->retrieveAsString(MESSAGE_LENGTH);
+		cout << "EchoServer onMessage " << data << endl;
 		pCon->send(data + '\n');
 	}
 
@@ -44,7 +46,7 @@ void  EchoServer::onWriteComplate(TcpConnection* pCon)
 
 void EchoServer::run(void* param)
 {
-	cout << _index << endl;
+	cout << "EchoServer index "<<_index << endl;
 	if(_index++ == 3)
 	{
 		_pLoop->cancelTimer(_timer);
