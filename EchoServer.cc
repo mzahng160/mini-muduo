@@ -29,10 +29,9 @@ void EchoServer::onConnection(TcpConnection* pCon)
 }
 void EchoServer::onMessage(TcpConnection* pCon, Buffer* message)
 {
-	while(message->readableBytes() > MESSAGE_LENGTH)
+	while(message->readableBytes() >= MESSAGE_LENGTH)
 	{
-		string data = message->retrieveAsString(MESSAGE_LENGTH);
-		cout << "EchoServer onMessage " << data << endl;
+		string data = message->retrieveAsString(MESSAGE_LENGTH);		
 		pCon->send(data + '\n');
 	}
 

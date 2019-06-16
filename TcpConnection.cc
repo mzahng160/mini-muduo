@@ -93,6 +93,7 @@ void TcpConnection::send(const string& message)
 	int n = 0;
 	if(0 == _outBuf.readableBytes())
 	{
+		cout << "TcpConnection send " << message << endl;
 		n = ::write(_sockfd, message.c_str(), message.size());
 		if(n < 0)
 			cout << "write error" << endl;		

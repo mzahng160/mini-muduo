@@ -12,7 +12,9 @@
 
 using namespace std;
 
+#ifndef UINTPTR_MAX 
 #define UINTPTR_MAX 0xffffffff
+#endif
 
 TimerQueue::TimerQueue(EventLoop* pLoop)
     :_timerfd(createTimerId())
