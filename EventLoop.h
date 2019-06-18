@@ -44,7 +44,7 @@ public:
 
 private:
 
-	void weakup();
+	void wakeup();
 	int createEventfd();
 	void doPendingFunctors();
 
@@ -53,7 +53,7 @@ private:
 	int _eventfd;
 	std::vector<Runner> _pendingFunctors;
 	TimerQueue* _pTimerQueue;
-	Channel* _weakupChannel;
+	Channel* _pEventfdChannel;
 	
 };
 

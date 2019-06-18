@@ -14,9 +14,9 @@ EventLoop::EventLoop()
 	,_pTimerQueue(new TimerQueue(this))
 {
 	_eventfd = createEventfd();
-	_weakupChannel = new Channel(this, _eventfd);
-	_weakupChannel->setCallback(this);
-	_weakupChannel->enableReading();	
+	_pEventfdChannel = new Channel(this, _eventfd);
+	_pEventfdChannel->setCallback(this);
+	_pEventfdChannel->enableReading();	
 }
 EventLoop::~EventLoop()
 {}
@@ -49,7 +49,7 @@ void EventLoop::queueLoop(IRun* pRun, void *param)
 	weakup();
 }
 
-void EventLoop::weakup()
+void EventLoop::wakeup()
 {
 	uint64_t one = 1;
 	ssize_t n = ::write(_eventfd, &one, sizeof(one));
