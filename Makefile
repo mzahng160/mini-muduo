@@ -1,5 +1,5 @@
 DESTINATION := mini-muduo
-LIBS :=
+LIBS := pthread
 INCLUDE := .
 
 RM := rm -f
