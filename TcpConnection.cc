@@ -73,7 +73,7 @@ void TcpConnection::handleWrite()
 {
 	cout << "TcpConnection handleWrite" << endl;
 
-	int sockfd = _pSocketChannel->getSockfd();
+	int sockfd = _pSocketChannel->getfd();
 	if(_pSocketChannel->isWriting())
 	{
 		int n = ::write(sockfd, _outBuf.peek(), _outBuf.readableBytes());
