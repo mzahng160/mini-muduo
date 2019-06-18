@@ -46,7 +46,7 @@ void EventLoop::queueLoop(IRun* pRun, void *param)
 {
 	Runner r(pRun, param);
 	_pendingFunctors.push_back(r);
-	weakup();
+	wakeup();
 }
 
 void EventLoop::wakeup()
