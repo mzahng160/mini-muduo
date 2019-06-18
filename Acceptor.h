@@ -20,7 +20,7 @@ public:
 private:
 	int createAndListen();
 	int _listenfd;
-	Channel* _pAcceptorChannel;
+	Channel* _pSocketAChannel;
 	IAcceptorCallback* _pCallback;
 	EventLoop* _pLoop;	
 };

@@ -11,7 +11,7 @@ using namespace std;
 
 Acceptor::Acceptor(EventLoop* pLoop)
 	:_listenfd(-1)
-	,_pAcceptorChannel(NULL)
+	,_pSocketAChannel(NULL)
 	,_pCallback(NULL)
 	,_pLoop(pLoop)
 {}
@@ -21,9 +21,9 @@ Acceptor::~Acceptor()
 void Acceptor::start()
 {
 	_listenfd = createAndListen();
-	_pAcceptorChannel = new Channel(_pLoop, _listenfd);
-	_pAcceptorChannel->setCallback(this);
-	_pAcceptorChannel->enableReading();
+	_pSocketAChannel = new Channel(_pLoop, _listenfd);
+	_pSocketAChannel->setCallback(this);
+	_pSocketAChannel->enableReading();
 }
 
 int Acceptor::createAndListen()
