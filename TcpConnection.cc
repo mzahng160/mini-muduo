@@ -18,9 +18,9 @@ TcpConnection::TcpConnection(int sockfd, EventLoop* pLoop)
 	,_pUser(NULL)
 {
 	cout << "TcpConnection new Channel finish!" << endl;
-	_pChannel = new Channel(_pLoop, _sockfd);	
-	_pChannel->setCallback(this);
-	_pChannel->enableReading();
+	_pSocketChannel = new Channel(_pLoop, _sockfd);	
+	_pSocketChannel->setCallback(this);
+	_pSocketChannel->enableReading();
 }
 
 TcpConnection::~TcpConnection()
@@ -38,7 +38,7 @@ void TcpConnection::setUser(IMuduoUser* pUser)
 
 void TcpConnection::handleRead()
 {
-	int sockfd = _pChannel->getSockfd();
+	int sockfd = _pSocketChannel->getfd();
 	char line[MAX_LINE];
 
 	if(sockfd < 0)
@@ -73,8 +73,8 @@ void TcpConnection::handleWrite()
 {
 	cout << "TcpConnection handleWrite" << endl;
 
-	int sockfd = _pChannel->getSockfd();
-	if(_pChannel->isWriting())
+	int sockfd = _pSocketChannel->getSockfd();
+	if(_pSocketChannel->isWriting())
 	{
 		int n = ::write(sockfd, _outBuf.peek(), _outBuf.readableBytes());
 		if(n > 0)
@@ -82,7 +82,7 @@ void TcpConnection::handleWrite()
 			cout << "write " << n << " byte data again" << endl;
 			_outBuf.retrieve(n);		
 			if(0 == _outBuf.readableBytes())
-				_pChannel->disableWriting();
+				_pSocketChannel->disableWriting();
 				_pLoop->queueLoop(this, NULL);
 		}
 	}
@@ -102,8 +102,8 @@ void TcpConnection::send(const string& message)
 	if(n < static_cast<int>(message.size()))
 	{
 		_outBuf.append(message.substr(n, message.size()));
-		if(_pChannel->isWriting())
-			_pChannel->enableWriting();
+		if(_pSocketChannel->isWriting())
+			_pSocketChannel->enableWriting();
 	}
 }
 

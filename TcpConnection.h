@@ -25,7 +25,7 @@ public:
 
 private:
 	int _sockfd;
-	Channel* _pChannel;
+	Channel* _pSocketChannel;
 	EventLoop* _pLoop;
 	IMuduoUser* _pUser;
 	Buffer _inBuf;
