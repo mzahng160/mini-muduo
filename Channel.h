@@ -21,7 +21,7 @@ public:
 	bool isWriting();
 
 	int getEvents();
-	int getSockfd();
+	int getfd();
 	int getIndex();
 
 private:

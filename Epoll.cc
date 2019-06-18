@@ -33,8 +33,6 @@ void Epoll::poll(std::vector<Channel*>* pChannels)
 		Channel* pChannel = static_cast<Channel*>(_events[i].data.ptr);
 		pChannel->setRevents(_events[i].events);
 		pChannels->push_back(pChannel);
-
-		int fd = pChannel->getSockfd();
 	}
 }
 
@@ -46,7 +44,7 @@ void Epoll::update(Channel* pChannel)
 		struct epoll_event ev;
 		ev.data.ptr = pChannel;
 		ev.events = pChannel->getEvents();
-		int fd = pChannel->getSockfd();
+		int fd = pChannel->getfd();
 		pChannel->setIndex(kAdded);
 		::epoll_ctl(_epollfd, EPOLL_CTL_ADD, fd, &ev);	
 	}
@@ -54,8 +52,8 @@ void Epoll::update(Channel* pChannel)
 	{
 		struct epoll_event ev;
 		ev.data.ptr = pChannel;
-		ev.events = pChannel->getSockfd();
-		int fd = pChannel->getSockfd();
+		ev.events = pChannel->getEvents();
+		int fd = pChannel->getfd();
 		::epoll_ctl(_epollfd, EPOLL_CTL_MOD, fd, &ev);	
 	}
 }

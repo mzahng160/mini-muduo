@@ -10,5 +10,8 @@ class EventLoop;
 class Epoll;
 class IMuduoUser;
 class Buffer;
+class TimerQueue;
+class Timestamp;
+class IRun;
 
 #endif
