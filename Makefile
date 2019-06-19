@@ -38,4 +38,4 @@ $(MISSING_DEPS) :
 endif
 
 $(DESTINATION) : $(OBJS)
-		$(CC) -o $(DESTINATION) $(OBJS) $(addprefix -1, $(LIBS))
+		$(CC) -o $(DESTINATION) $(OBJS) $(addprefix -L, $(LIBS))
