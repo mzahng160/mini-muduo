@@ -12,7 +12,7 @@ public:
 	}
 	~MutexLock()
 	{
-		pthread_mutex_destory(&_mutexid);
+		pthread_mutex_destroy(&_mutexid);
 	}
 
 	void lock()
@@ -40,12 +40,12 @@ public:
 	MutexLockGuard(MutexLock& mutex)
 	 	:_mutex(mutex)
 	{
-	 	_mutex.lock()
+	 	_mutex.lock();
 	}
 
 	~ MutexLockGuard()
 	{
-		_mutex.unlock()
+		_mutex.unlock();
 	}
 
 private:

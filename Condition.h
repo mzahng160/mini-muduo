@@ -15,12 +15,12 @@ public:
 
 	~ Condition()
 	{
-		pthread_cond_destory(&_condid);
+		pthread_cond_destroy(&_condid);
 	}
 
 	void wait()
 	{
-		pthread_cond_wait(&_condid, mutex.getPthreadMutex());
+		pthread_cond_wait(&_condid, _mutex.getPthreadMutex());
 	}
 
 	void notify()

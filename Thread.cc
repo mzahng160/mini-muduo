@@ -14,10 +14,10 @@ Thread::Thread(IRun* pRun)
 	:_run(pRun)
 {}
 
-Thread::start()
+void Thread::start()
 {
 	pthread_t t;
-	::pthread_create(&t, NULL, globalRun, this);
+	pthread_create(&t, NULL, globalRun, this);	  
 }
 
 void Thread::run()

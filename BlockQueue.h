@@ -10,7 +10,7 @@ class BlockQueue
 {
 public:
 	BlockQueue()
-		:_cond
+		:_cond(_mutex)
 	{}
 	~BlockQueue()
 	{}
@@ -36,7 +36,7 @@ public:
 	}
 	
 private:
-	deque<T> _queue;
+	std::deque<T> _queue;
 	MutexLock _mutex;
 	Condition _cond;
 };

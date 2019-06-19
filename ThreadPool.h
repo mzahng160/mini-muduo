@@ -7,13 +7,12 @@
 
 #include <vector>
 
-class TheradPool
+class ThreadPool : public IRun
 {
 public:
-	TheradPool();
+	ThreadPool();
 	void start(int numThreads);
-	void addTask(IRun* ptask);
-	~TheradPool();
+	void addTask(IRun* ptask);	
 
 public:
 	virtual void run(void* param);
@@ -21,7 +20,7 @@ public:
 private:
 	void runInThread();
 	BlockQueue<IRun*> _tasks;
-	vector<Thread*> _threads;
+	std::vector<Thread*> _threads;
 	
 };
 

@@ -1,5 +1,5 @@
 DESTINATION := mini-muduo
-LIBS := pthread
+LIBS := lpthread
 INCLUDE := .
 
 RM := rm -f
@@ -38,4 +38,4 @@ $(MISSING_DEPS) :
 endif
 
 $(DESTINATION) : $(OBJS)
-		$(CC) -o $(DESTINATION) $(OBJS) $(addprefix -L, $(LIBS))
+		$(CC) -o $(DESTINATION) $(OBJS) $(addprefix -, $(LIBS))

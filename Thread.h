@@ -4,6 +4,8 @@
 #include "BlockQueue.h"
 #include "IRun.h"
 
+#include <pthread.h>
+
 class Thread
 {
 public:
