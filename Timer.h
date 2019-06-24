@@ -7,7 +7,7 @@
 class Timer
     {
     public:
-        Timer(Timestamp stamp, IRun* pRun, double interval)
+        Timer(Timestamp stamp, IRun0* pRun, double interval)
           :_stamp(stamp)
           ,_id(stamp)
           ,_pRun(pRun)
@@ -25,7 +25,7 @@ class Timer
 
         void run()
         {
-          _pRun->run(this);
+          _pRun->run0();
         }
 
         bool isRepeat()
@@ -40,7 +40,7 @@ class Timer
     private:
         Timestamp _stamp;
         Timestamp _id;
-        IRun* _pRun;
+        IRun0* _pRun;
         double _interval;    
     };
 

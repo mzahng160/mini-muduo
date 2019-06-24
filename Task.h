@@ -1,0 +1,22 @@
+#ifndef TASK_H
+#define TASK_H
+
+#include "Declear.h"
+#include <string>
+
+class Task
+{
+public:
+	Task(IRun0* func);
+	Task(IRun2* func, const std::string& str, void* param);
+	~Task();
+	void doTask();
+	
+private:
+	IRun0* _func0;
+	IRun0* _func2;
+	std::string _str;
+	void* _param;
+};
+
+#endif

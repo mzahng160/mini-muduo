@@ -1,10 +1,17 @@
 #ifndef _IRUN_H
 #define _IRUN_H
 
-class IRun
+#include <string>
+
+class IRun0
 {
 public:
-	void virtual run(void* param) = 0;	
+	virtual void  run0() = 0;
 };
 
+class IRun2
+{
+public:
+	virtual void  run2(const std::string& str, void* param) = 0;
+};
 #endif
