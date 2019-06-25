@@ -26,7 +26,7 @@ public:
 	Timer* runAfter(double delay, IRun0* pRun);
 	Timer* runEvery(double interval, IRun0* pRun);
 	void cancelTimer(Timer* timerfd);
-	bool idInLoopThread();
+	bool isInLoopThread();
 
 	virtual void handleRead();
 	virtual void handleWrite();

@@ -53,13 +53,13 @@ void EventLoop::queueInLoop(Task& task)
 		_pendingFunctors.push_back(task);
 	}
 	
-	if(!idInLoopThread() || _callingPendingFunctors)		
+	if(!isInLoopThread() || _callingPendingFunctors)		
 		wakeup();
 }
 
 void EventLoop::runInLoop(Task& task)
 {
-	if(idInLoopThread())
+	if(isInLoopThread())
 		task.doTask();
 	else
 		queueInLoop(task);
@@ -132,7 +132,7 @@ void EventLoop::handleWrite()
 
 }
 
-bool EventLoop::idInLoopThread()
+bool EventLoop::isInLoopThread()
 {
 	return _threadId = CurrentThread::tid();
 }

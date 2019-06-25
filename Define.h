@@ -9,7 +9,7 @@
 
 #define PORT			1111
 
-const string addTimer = "add_timer";
-const string cancelTimer = "cancel_timer";
+const std::string addTimer = "add_timer";
+const std::string cancelTimer = "cancel_timer";
 
 #endif

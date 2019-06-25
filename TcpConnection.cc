@@ -3,6 +3,7 @@
 #include "Channel.h"
 #include "Define.h"
 #include "EventLoop.h"
+#include "Task.h"
 
 #include <unistd.h>
 #include <string.h>
@@ -84,12 +85,26 @@ void TcpConnection::handleWrite()
 			_outBuf.retrieve(n);		
 			if(0 == _outBuf.readableBytes())
 				_pSocketChannel->disableWriting();
-				_pLoop->queueLoop(this, NULL);
+				Task task(this);
+				_pLoop->queueInLoop(task);
 		}
 	}
 }
 
 void TcpConnection::send(const string& message)
+{
+	if(_pLoop->isInLoopThread())
+	{
+		sendInLoop(message);		
+	}
+	else
+	{
+		Task task(this, message, this);
+		_pLoop->runInLoop(task);
+	}
+}
+
+void TcpConnection::sendInLoop(const std::string& message)
 {
 	int n = 0;
 	if(0 == _outBuf.readableBytes())
@@ -97,18 +112,29 @@ void TcpConnection::send(const string& message)
 		cout << "TcpConnection send " << message << endl;
 		n = ::write(_sockfd, message.c_str(), message.size());
 		if(n < 0)
-			cout << "write error" << endl;		
+			cout << "write error" << endl;
+
+		if(n == static_cast<int>(message.size()))
+		{
+			Task task(this);
+			_pLoop->queueInLoop(task);
+		}	
 	}
 
 	if(n < static_cast<int>(message.size()))
 	{
 		_outBuf.append(message.substr(n, message.size()));
-		if(_pSocketChannel->isWriting())
+		if(!_pSocketChannel->isWriting())
 			_pSocketChannel->enableWriting();
 	}
 }
 
-void TcpConnection::run(void* param)
+void TcpConnection::run0(void* param)
 {
 	_pUser->onWriteComplate(this);
+}
+
+void TcpConnection::run2(const std::string& message, void* param)
+{
+	sendInLoop(message);
 }
