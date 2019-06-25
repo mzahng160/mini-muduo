@@ -1,6 +1,8 @@
 #include "EventLoop.h"
 #include "Epoll.h"
 #include "Channel.h"
+#include "Task.h"
+#include "CurrentThread.h"
 
 #include <unistd.h>
 #include <sys/eventfd.h>
@@ -10,7 +12,9 @@ using namespace std;
 
 EventLoop::EventLoop()
 	:_quit(false)
+	,_callingPendingFunctors(false)
 	,_pPoller(new Epoll())
+	,_threadId(CurrentThread::tid())
 	,_pTimerQueue(new TimerQueue(this))
 {
 	_eventfd = createEventfd();
@@ -42,11 +46,23 @@ void EventLoop::update(Channel* pChannel)
 	_pPoller->update(pChannel);
 }
 
-void EventLoop::queueLoop(IRun* pRun, void *param)
+void EventLoop::queueInLoop(Task& task)
 {
-	Runner r(pRun, param);
-	_pendingFunctors.push_back(r);
-	wakeup();
+	{
+		MutexLockGuard guard(_mutex);
+		_pendingFunctors.push_back(task);
+	}
+	
+	if(!idInLoopThread() || _callingPendingFunctors)		
+		wakeup();
+}
+
+void EventLoop::runInLoop(Task& task)
+{
+	if(idInLoopThread())
+		task.doTask();
+	else
+		queueInLoop(task);
 }
 
 void EventLoop::wakeup()
@@ -57,17 +73,17 @@ void EventLoop::wakeup()
 		cout << "EventLoop::weak() writes" << n << "bytes not 8" << endl;
 }
 
-Timer* EventLoop::runAt(Timestamp when, IRun* pRun)
+Timer* EventLoop::runAt(Timestamp when, IRun0* pRun)
 {
 	return _pTimerQueue->addTimer(pRun, when, 0.0);
 }
 
-Timer* EventLoop::runAfter(double delay, IRun* pRun)
+Timer* EventLoop::runAfter(double delay, IRun0* pRun)
 {
 	return _pTimerQueue->addTimer(pRun, Timestamp::nowAfter(delay), 0.0);
 }
 
-Timer* EventLoop::runEvery(double interval, IRun* pRun)
+Timer* EventLoop::runEvery(double interval, IRun0* pRun)
 {
 	return _pTimerQueue->addTimer(pRun, Timestamp::nowAfter(interval), interval);
 }
@@ -88,13 +104,19 @@ int EventLoop::createEventfd()
 
 void EventLoop::doPendingFunctors()
 {
-	std::vector<Runner> tempRuns;
-	tempRuns.swap(_pendingFunctors);
-	std::vector<Runner>::iterator it;
+	std::vector<Task> tempRuns;
+	_callingPendingFunctors = true;
+	{
+		MutexLockGuard guard(_mutex);
+		tempRuns.swap(_pendingFunctors);	
+	}
+	
+	std::vector<Task>::iterator it;
 	for (it = tempRuns.begin(); it != tempRuns.end(); ++it)
 	{
-		(*it).doRun();
+		it->doTask();
 	}
+	_callingPendingFunctors = false;
 }
 
 void EventLoop::handleRead()
@@ -108,4 +130,9 @@ void EventLoop::handleRead()
 void EventLoop::handleWrite()
 {
 
+}
+
+bool EventLoop::idInLoopThread()
+{
+	return _threadId = CurrentThread::tid();
 }

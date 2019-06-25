@@ -5,26 +5,12 @@
 #include "IRun.h"
 #include "IChannelCallback.h"
 #include "TimerQueue.h"
-
+#include "Mutex.h"
 #include <vector>
 
 class EventLoop : IChannelCallback
 {
 public:
-	class Runner
-	{
-	public:
-		Runner(IRun* r, void* p)
-			:_pRun(r), _param(p){}
-		void doRun()
-		{
-			_pRun->run(_param);
-		}
-
-	private:
-		IRun* _pRun;
-		void *_param;		
-	};
 
 	EventLoop();
 	~EventLoop();
@@ -32,12 +18,15 @@ public:
 	void loop();
 	void update(Channel* pChannel);
 
-	void queueLoop(IRun* pRun, void *param);
+	//void queueLoop(IRun* pRun, void *param);
+	void queueInLoop(Task& task);
+	void runInLoop(Task& task);
 
-	Timer* runAt(Timestamp when, IRun* pRun);
-	Timer* runAfter(double delay, IRun* pRun);
-	Timer* runEvery(double interval, IRun* pRun);
+	Timer* runAt(Timestamp when, IRun0* pRun);
+	Timer* runAfter(double delay, IRun0* pRun);
+	Timer* runEvery(double interval, IRun0* pRun);
 	void cancelTimer(Timer* timerfd);
+	bool idInLoopThread();
 
 	virtual void handleRead();
 	virtual void handleWrite();
@@ -48,10 +37,13 @@ private:
 	int createEventfd();
 	void doPendingFunctors();
 
+	bool _callingPendingFunctors;
 	bool _quit;
 	Epoll* _pPoller;
 	int _eventfd;
-	std::vector<Runner> _pendingFunctors;
+	const pid_t _threadId;
+	MutexLock _mutex;
+	std::vector<Task> _pendingFunctors;
 	TimerQueue* _pTimerQueue;
 	Channel* _pEventfdChannel;
 	

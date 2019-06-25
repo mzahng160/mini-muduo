@@ -23,7 +23,7 @@ class Timer
             return _id;
         }
 
-        void run()
+        void timeout()
         {
           _pRun->run0();
         }

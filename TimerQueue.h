@@ -11,46 +11,20 @@
 #include <vector>
 
 class TimerQueue : public IChannelCallback
+                    ,IRun2
 {
 public:
-  
-    class AddTimerWrapper : public IRun
-    {
-        public:
-            AddTimerWrapper(TimerQueue* pQueue)
-                :_pQueue(pQueue)
-                {}
-            virtual void run(void* param)
-            {
-                _pQueue->doAddTimer(param);
-            }
-        private:
-            TimerQueue* _pQueue;
-    };
-
-    class CancelTimerWrapper : public IRun
-    {
-        public:
-            CancelTimerWrapper(TimerQueue* pQueue)
-                :_pQueue(pQueue)
-                {}
-
-                virtual void run(void* param)
-                {
-                    _pQueue->doCancelTimer(param);
-                }
-          private:
-              TimerQueue* _pQueue;
-
-    };
 
     TimerQueue(EventLoop* pLoop);
     ~TimerQueue();
-    void doAddTimer(void* param);
-    void doCancelTimer(void* param);
-    Timer* addTimer(IRun* pRun, Timestamp when,
+    void doAddTimer(Timer* param);
+    void doCancelTimer(Timer* param);
+
+    Timer* addTimer(IRun0* pRun, Timestamp when,
             double interval);
     void cancelTimer(Timer* timerId);
+
+    virtual void run2(const std::string& str, void* timer);
 
     virtual void handleRead();
     virtual void handleWrite();
@@ -72,8 +46,6 @@ private:
     TimerList _timers;
     EventLoop* _pLoop;
     Channel* _timerfdChannel;
-    AddTimerWrapper* _addTimerWrapper;
-    CancelTimerWrapper* _cancelTimerWrapper;
 };
 
 #endif
