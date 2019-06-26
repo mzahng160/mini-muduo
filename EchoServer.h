@@ -5,9 +5,10 @@
 #include "TcpServer.h"
 #include "Timer.h"
 #include "IRun.h"
+#include "ThreadPool.h"
 
 class EchoServer : public IMuduoUser
-					,public IRun
+					,public IRun2
 {
 public:
 	EchoServer(EventLoop* pLoop);
@@ -18,10 +19,12 @@ public:
 	virtual void onMessage(TcpConnection* pCon, Buffer* message);
     virtual void onWriteComplate(TcpConnection* pCon);
 
-    virtual void run(void* param);
+    virtual void run2(const string& str, void* tcp);
 private:
+	int fib(int n);
 	EventLoop* _pLoop;
 	TcpServer _pServer;
+	ThreadPool _threadpool;
 
 	Timer* 	_timer;
 	int 	_index;

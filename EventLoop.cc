@@ -134,5 +134,5 @@ void EventLoop::handleWrite()
 
 bool EventLoop::isInLoopThread()
 {
-	return _threadId = CurrentThread::tid();
+	return _threadId == CurrentThread::tid();
 }

@@ -23,7 +23,7 @@ public:
 
 	virtual void handleRead();
 	virtual void handleWrite();
-	virtual void run0(void* param);
+	virtual void run0();
 	virtual void run2(const std::string& message, void* param);
 
 private:

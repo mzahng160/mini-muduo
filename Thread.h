@@ -1,21 +1,19 @@
 #ifndef THREAD_H
 #define THREAD_H
 
-#include "BlockQueue.h"
-#include "IRun.h"
-
+#include "Declear.h"
+#include "Task.h"
 #include <pthread.h>
 
 class Thread
 {
 public:
-	Thread(IRun* pRun);
+	Thread(Task& task);
 	void start();
-	void run();
-	pid_t gettid();	
+	pid_t gettid();
 
 private:
-	IRun* _run;	
+	Task _task;
 	
 };
 

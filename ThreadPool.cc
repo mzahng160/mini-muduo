@@ -1,5 +1,6 @@
 #include "ThreadPool.h"
 #include "Thread.h"
+#include "Task.h"
 
 #include <pthread.h>
 #include <iostream>
@@ -15,18 +16,19 @@ void ThreadPool::start(int numThreads)
 	_threads.reserve(numThreads);
 	for(int i = 0; i < numThreads; i++)
 	{
-		Thread* p = new Thread(this);
+		Task task(this);
+		Thread* p = new Thread(task);
 		_threads.push_back(p);
 		p->start();
 	}
 }
 
-void ThreadPool::addTask(IRun* ptask)
+void ThreadPool::addTask(Task& task)
 {
-	_tasks.put(ptask);
+	_tasks.put(task);
 }
 
-void ThreadPool::run(void* param)
+void ThreadPool::run0()
 {
 	runInThread();
 }
@@ -35,7 +37,6 @@ void ThreadPool::runInThread()
 {
 	while(true)
 	{
-		IRun* task = (IRun*)_tasks.take();
-		task->run(NULL);
+		_tasks.take().doTask();
 	}
 }

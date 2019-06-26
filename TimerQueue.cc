@@ -2,6 +2,7 @@
 #include "Channel.h"
 #include "EventLoop.h"
 #include "Task.h"
+#include "Define.h"
 
 #include <strings.h>
 #include <unistd.h>
@@ -32,11 +33,11 @@ TimerQueue::~TimerQueue()
 
 void TimerQueue::run2(const std::string& str, void* timer)
 {
-	if(str == addTimer)
+	if(str == "addTimer")
 	{
 		doAddTimer((Timer*)timer);
 	}
-	else if(str == cancelTimer)
+	else if(str == "cancelTimer")
 	{
 		doCancelTimer((Timer*)timer);
 	}
@@ -44,20 +45,20 @@ void TimerQueue::run2(const std::string& str, void* timer)
 
 void TimerQueue::doAddTimer(Timer* param)
 {
-	bool earliestChanged = insert(pTimer);
+	bool earliestChanged = insert(param);
 	if(earliestChanged)
 	{
-		resetTimerfd(_timerfd, pTimer->getStamp());
+		resetTimerfd(_timerfd, param->getStamp());
 	}
 }
 
 void TimerQueue::doCancelTimer(Timer* param)
 {
-	Entry e(timer->getId(), timer);
+	Entry e(param->getId(), param);
 	TimerList::iterator it;
 	for (it = _timers.begin(); it != _timers.end(); it++)
 	{
-		if (it->second == timer)
+		if (it->second == param)
 		{
 			_timers.erase(it);
 			break;
@@ -69,15 +70,15 @@ Timer* TimerQueue::addTimer(IRun0* pRun, Timestamp when, double interval)
 {
 
 	Timer* pTimer = new Timer(when, pRun, interval);
-	Task task(this, addTimer, pTimer);
-	_pLoop->queueLoop(task);
+	Task task(this, "addTimer", pTimer);
+	_pLoop->queueInLoop(task);
 	return pTimer;
 }
 
 void TimerQueue::cancelTimer(Timer* timerId)
 {
-	Task task(this, cancelTimer, timerId);
-	_pLoop->queueLoop(task);
+	Task task(this, "cancelTimer", timerId);
+	_pLoop->queueInLoop(task);
 }
 
 void TimerQueue::handleRead()

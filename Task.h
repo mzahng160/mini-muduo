@@ -14,7 +14,7 @@ public:
 	
 private:
 	IRun0* _func0;
-	IRun0* _func2;
+	IRun2* _func2;
 	std::string _str;
 	void* _param;
 };

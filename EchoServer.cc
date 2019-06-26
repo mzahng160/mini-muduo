@@ -2,10 +2,14 @@
 #include "TcpConnection.h"
 #include "EventLoop.h"
 #include "Buffer.h"
+#include "CurrentThread.h"
+#include "Task.h"
 
 #include <iostream>
 
 using namespace std;
+
+__thread int CurrentThread::t_cacheTid; 
 
 #define MESSAGE_LENGTH 	8
 
@@ -22,6 +26,7 @@ EchoServer::~EchoServer()
 void EchoServer::start()
 {
 	_pServer.start();
+	_threadpool.start(3);
 }
 void EchoServer::onConnection(TcpConnection* pCon)
 {
@@ -32,10 +37,9 @@ void EchoServer::onMessage(TcpConnection* pCon, Buffer* message)
 	while(message->readableBytes() >= MESSAGE_LENGTH)
 	{
 		string data = message->retrieveAsString(MESSAGE_LENGTH);		
-		pCon->send(data + '\n');
+		Task task(this, data, pCon);
+		_threadpool.addTask(task);
 	}
-
-	_timer = _pLoop->runEvery(0.5, this);
 }
 
 void  EchoServer::onWriteComplate(TcpConnection* pCon)
@@ -43,12 +47,13 @@ void  EchoServer::onWriteComplate(TcpConnection* pCon)
 	cout << "onWriteComplate" << endl;
 }
 
-void EchoServer::run(void* param)
+void EchoServer::run2(const string& str, void* tcp)
+{	
+	cout << "fib(30) = "<< fib(30) << "tid: " << CurrentThread::tid() << endl;
+	((TcpConnection*)tcp)->send(str + "\n");
+}
+
+int EchoServer::fib(int n)
 {
-	cout << "EchoServer index "<<_index << endl;
-	if(_index++ == 3)
-	{
-		_pLoop->cancelTimer(_timer);
-		_index = 0;
-	}
+	return (n == 1 || n == 2) ? 1 : (fib(n-1) + fib(n-2));
 }

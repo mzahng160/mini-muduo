@@ -7,19 +7,19 @@
 
 #include <vector>
 
-class ThreadPool : public IRun
+class ThreadPool : public IRun0
 {
 public:
 	ThreadPool();
 	void start(int numThreads);
-	void addTask(IRun* ptask);	
+	void addTask(Task& task);
 
 public:
-	virtual void run(void* param);
+	virtual void run0();
 
 private:
 	void runInThread();
-	BlockQueue<IRun*> _tasks;
+	BlockQueue<Task> _tasks;
 	std::vector<Thread*> _threads;
 	
 };

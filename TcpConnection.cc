@@ -49,6 +49,9 @@ void TcpConnection::handleRead()
 	}
 	bzero(line, MAX_LINE);
 	int readlen = read(sockfd, line, MAX_LINE);
+
+	cout << "TcpConnection::handleRead readlen " << readlen << endl;
+
 	if(readlen < 0)
 	{
 		if(errno == ECONNRESET)
@@ -129,7 +132,7 @@ void TcpConnection::sendInLoop(const std::string& message)
 	}
 }
 
-void TcpConnection::run0(void* param)
+void TcpConnection::run0()
 {
 	_pUser->onWriteComplate(this);
 }

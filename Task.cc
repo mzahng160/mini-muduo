@@ -9,6 +9,11 @@ Task::Task(IRun0* func)
 
 }
 
+Task::~Task()
+{
+	
+}
+
 Task::Task(IRun2* func, const std::string& str, void* param)
 	:_func0(NULL)
 	,_func2(func)

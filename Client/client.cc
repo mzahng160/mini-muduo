@@ -1,9 +1,12 @@
 #include <iostream>
 #include <string>
+
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_LINE	100
 
@@ -23,13 +26,14 @@ int main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	std::string data = "1234567";
+	std::string data = "12345678";
 	char line[MAX_LINE];
 
 	for(int i = 0; i < 10; i++)
 	{		
 		std::string senddata(data);
-		senddata.append(std::to_string(i));
+		//senddata.append(std::to_string(i).c_str());
+		senddata.append("111");
 		int len = write(sockfd, data.c_str(), data.size());
 		if(len == data.size())
 		{
